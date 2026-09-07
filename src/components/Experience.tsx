@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import { gsap } from 'gsap';
 import * as THREE from 'three';
+import LiquidSignal from './LiquidSignal';
 
 type Motion = { x:number; y:number; vx:number; vy:number; px:number; py:number; down:boolean; ready:boolean; reduced:boolean };
 class SceneBoundary extends Component<{children:ReactNode},{failed:boolean}> {
@@ -85,6 +86,7 @@ export default function Experience(){
   },[]);
   return <main ref={root} aria-label="WEBECK">
     <div className="intro" aria-hidden="true"><span ref={word}>WEBECK</span></div>
+    <LiquidSignal />
     <div ref={stage} className="stage" tabIndex={0} role="application" aria-label="回転する3Dオブジェクト。ドラッグ、スワイプ、または矢印キーで回転。スペースキーで停止。"
       onPointerDown={e=>{if(!motion.current.ready||pointer.current.id!==-1||e.button!==0)return;e.currentTarget.setPointerCapture(e.pointerId);pointer.current={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp};motion.current.down=true;motion.current.vx=0;motion.current.vy=0;}}
       onPointerMove={e=>{const m=motion.current;const rect=e.currentTarget.getBoundingClientRect();m.px=(e.clientX/rect.width-.5)*2;m.py=(e.clientY/rect.height-.5)*2;if(pointer.current.id!==e.pointerId||!m.down)return;const p=pointer.current,dt=Math.max((e.timeStamp-p.time)/1000,.008),factor=5/Math.min(rect.width,rect.height);const dx=(e.clientX-p.x)*factor,dy=(e.clientY-p.y)*factor;m.x+=dy;m.y+=dx;m.vx=THREE.MathUtils.clamp(dy/dt,-20,20);m.vy=THREE.MathUtils.clamp(dx/dt,-20,20);pointer.current={id:e.pointerId,x:e.clientX,y:e.clientY,time:e.timeStamp};}}
